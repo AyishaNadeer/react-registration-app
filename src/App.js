@@ -49,10 +49,10 @@ function App() {
   return (
       <MainCard >
         <InnerCard >
-        {notification && (notification.status === 'pending') && <Notification 
+        {/* {notification && (notification.status === 'pending') && <Notification 
         status={notification.status} 
         title={notification.title}
-        message={notification.message} />}
+        message={notification.message} />} */}
         </InnerCard>
       </MainCard>
   );

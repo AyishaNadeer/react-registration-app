@@ -323,6 +323,7 @@ const ConfirmationForm = ({ values }) => {
                             ref={inputRef}
                             onChange={(e) => handleFileChange(e, setFieldValue)}
                             style={{ display: 'none' }}
+                            accept="image/*"
                           />
                         </Grid>
                       </Grid>
