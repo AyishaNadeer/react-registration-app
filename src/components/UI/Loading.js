@@ -1,16 +1,32 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
 
-import {Stack, FormGroup, TextField,InputAdornment, Button, Select, MenuItem, NativeSelect,Box, Card, CardContent, Typography,InputLabel,Input, Grid, Paper} from '@mui/material';
+import {Stack, Typography,CircularProgress, Box,  Grid} from '@mui/material';
+import globalUseStyles from '../Registration/Forms/stylesHooks';
 
 const Loading = () => {
+    const globalClasses = globalUseStyles();
     return(
-        <Grid container  spacing={5}  display="block">
+       
+        <Stack>
+                <Box  sx={{display: 'block'}}
+              component="div"
+              
+            >
+                <Grid container  spacing={5}  display="block">
             <Grid item md={12} sx={2} textAlign="center">
             <Typography fontWeight="normal" variant="h1"><RefreshIcon  fontSize="inherit" color="#757575"/></Typography>
+        
             </Grid>
             
             
         </Grid>
+            </Box>
+        </Stack>
+        
+          
+            
+        
+       
     );
 };
 

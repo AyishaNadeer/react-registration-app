@@ -1,8 +1,7 @@
 import classes from './Notification.module.css';
-
 import RefreshIcon from '@mui/icons-material/Refresh';
 
-import {Stack, FormGroup, TextField,InputAdornment, Button, Select, MenuItem, NativeSelect,Box, Card, CardContent, Typography,InputLabel,Input, Grid, Paper} from '@mui/material';
+import {Typography, Grid} from '@mui/material';
 
 const Notification = (props) => {
   let specialClasses = '';
@@ -24,11 +23,7 @@ const Notification = (props) => {
             
             
         </Grid>
-    // <section className={cssClasses}>
-    //     <RefreshIcon 
-    //   <h2>{props.title}</h2>
-    //   <p>{props.message}</p>
-    // </section>
+   
   );
 };
 

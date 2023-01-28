@@ -1,30 +1,37 @@
-import React , {useEffect, useState} from 'react';
+import React  from 'react';
 import { Formik, Form, Field } from 'formik';
 import { Grid,  Button, Typography } from '@mui/material';
 import { TextField } from 'material-ui-formik-components';
-import { object, string, number } from 'yup';
+import { object, string } from 'yup';
 import { Stack, Box} from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { userActions } from '../../../store/user-slice';
 import { counterActions } from '../../../store/stepperCounter-slice';
 import { uiActions } from '../../../store/ui-slice';
 
+import apiRequest from '../../../apiRequest';
+import globalUseStyles from './stylesHooks';
+
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
 const FORM_VALIDATION = object().shape({
-  building: string().required(),
-  city: string().required(),
-  landline: string().min(9).max(9).required(),
-  address1: string().required(),
-  address2: string().required(),
-  poBox: number().required()
+  building: string().required(''),
+  city: string().required(''),
+  landline: string().matches(phoneRegExp, 'Phone number is not valid').min(9).max(9).required(''),
+  address1: string().required(''),
+  address2: string().required(''),
+  poBox: string().required('')
 });
 
 const OfficeDetailsForm = ({
   values,
   errors
 }) => {
+
+  const API_URL = 'http://localhost:3500/users';
+
+  const globalClasses = globalUseStyles();
  
-  const[loading, setLoading] = useState(false);
-  
   const dispatch = useDispatch();
   const steps =  useSelector(state => state.counter.steps); 
   const activeStep = useSelector(state => state.counter.counter);
@@ -32,72 +39,35 @@ const OfficeDetailsForm = ({
    
   const userId = user.id;
 
-  const fetchMethod =  async () => {
-    let data1 = null;
-    fetch(`https://react-http-d77c9-default-rtdb.firebaseio.com//User/${userId}.json`)
-    .then((response)=> {return response.json()})
-    .then((data) => {
-      return data.officeInfo;    
-    })
-    .catch(error => console.log(error));
-      return data1;
-  }
+ 
+  const saveUserData = async (userData) => {
 
-  useEffect(() => {    
-       setLoading(true);
-       fetchMethod().then((data) => {
-      });
-       setLoading(false);
+    dispatch(uiActions.showNotification({status: 'pending',title: 'Sending...',message: 'Sending user data'}));
 
-  }, [])
-
-  const sendUserData = async (userData) => {
-
-    dispatch(uiActions.showNotification({
-      status: 'pending',
-      title: 'Sending...',
-      message: 'Sending user data'
-    }));
     if(userId !== ''){
-    
-      const response = await fetch(
-        `https://react-http-d77c9-default-rtdb.firebaseio.com/User/${userId}.json`, 
-        {
-          method: 'PUT',
-          body: JSON.stringify({
-              personalInfo: user.personalInfo,
-              officeInfo: userData,
-              profile: user.profile,
-              signature: user.signature
-              
-            }
-          )
-        }
-      );
-      if(!response.ok){
-        dispatch(uiActions.showNotification({
-          status: 'error',
-          title: 'Error!',
-          message: 'Sending user data failed'
-        }));
-      }
-    }
+      const updateOptions = {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          officeInfo: userData
+        })
+      };
 
-    dispatch(uiActions.showNotification({
-      status: 'success',
-      title: 'Success!',
-      message: 'Sent user data successfully!'
-    }));
-    
+      const { errMsg}  = await apiRequest(`${API_URL}/${userId}`, updateOptions)
+      if(errMsg)  dispatch(uiActions.showNotification({ status: 'error',title: 'Error!',message: 'Sending user data failed'}));
+      else  dispatch(uiActions.showNotification({status: 'success',title: 'Success!',message: 'Sent user data successfully!'}));
+    }
+  
   }
 
-  if(loading) 
-    return(<div></div>);
+
   return (
     <Stack>
-      <Box 
+      <Box className={globalClasses.formBox}
             component="div"
-            sx={{display: "block", border: "2px dashed grey",borderRadius: "25px",height: "auto" }}
+            sx={{m:5}}
           >
         <Formik
           initialValues={user.officeInfo}
@@ -105,35 +75,38 @@ const OfficeDetailsForm = ({
           onSubmit={(values, { setSubmitting }) => {
             
             if (setSubmitting){
+
               dispatch(userActions.addUserOfficeInfo(values));
-                       
-           sendUserData(values)
-           .then(() => {
-            dispatch(counterActions.increment());
-            if(activeStep === steps.length-1) {
-             dispatch(counterActions.finish());
-            }
-           })
-           .catch(error => {
-            dispatch(uiActions.showNotification({
-              status: 'error',
-              title: 'Error!',
-              message: 'Sending user data failed'
-            }));
-          })
-            }  
+
+  saveUserData(values)
+  .then(() => {
+    dispatch(counterActions.increment());
+    if(activeStep === steps.length-1) {
+     dispatch(counterActions.finish());
+    }
+    dispatch(counterActions.completeStep(activeStep));
+  })
+  .catch(error => {
+      dispatch(uiActions.showNotification({
+        status: 'error',
+        title: 'Error!',
+        message: 'Sending user data failed'
+      }));
+    })
+
+             }  
            
           }}
         >
           {({ isSubmitting }) => (
             <Form>
-              <Grid   textAlign="center"  container >
-              <Grid container xs={12} sm={8} spacing={1}  >
-                  <Grid item xs={6}  textAlign="right" >
-                    <Typography variant="body" component="p" md={6} sx={{pt:2,  mr: 10, fontWeight: 'bold' }} >Building </Typography>
+              <Grid  className={globalClasses.root} container sx={{p: 10}} >
+              <Grid container xs={12} sm={8}  >
+                  <Grid item xs={6}  className={globalClasses.inputLabel} >
+                    <Typography variant="body2" component="p" md={6} sx={{pt:2,  mr: 10 }} >Building </Typography>
                   </Grid>
                   <Grid item xs={12} sm={6} md={6} lg={4} xl={3} >
-                    <Field
+                    <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
                       name="building"
@@ -143,11 +116,11 @@ const OfficeDetailsForm = ({
                     />
                   </Grid>
 
-                  <Grid item xs={6}  textAlign="right"  >
-                  <Typography variant="body" component="p" md={6} sx={{pt:2,  mr: 10, fontWeight: 'bold' }}>City</Typography>
+                  <Grid item xs={6}  className={globalClasses.inputLabel} >
+                  <Typography variant="body2" component="p" md={6} sx={{pt:2,  mr: 10 }}>City</Typography>
                   </Grid>
                   <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
-                    <Field
+                    <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
                       name="city"
@@ -158,12 +131,12 @@ const OfficeDetailsForm = ({
                     />
                   </Grid>
 
-                  <Grid item xs={6}  textAlign="right">
+                  <Grid item xs={6}   className={globalClasses.inputLabel}>
                     
-                    <Typography variant="body" component="p" md={6} sx={{ pt:2, mr: 10, fontWeight: 'bold' }}>Landline Number</Typography>
+                    <Typography variant="body2" component="p" md={6} sx={{ pt:2, mr: 10 }}>Landline Number</Typography>
                   </Grid>
                   <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
-                    <Field
+                    <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
                       name="landline"
@@ -173,11 +146,11 @@ const OfficeDetailsForm = ({
                     />
                   </Grid>
 
-                  <Grid item xs={6}  textAlign="right">
-                  <Typography variant="body" component="p" md={6} sx={{pt:2,  mr: 10, fontWeight: 'bold' }}>Address 1</Typography>
+                  <Grid item xs={6}  className={globalClasses.inputLabel}>
+                  <Typography variant="body2" component="p" md={6} sx={{pt:2,  mr: 10 }}>Address 1</Typography>
                   </Grid>
                   <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
-                    <Field
+                    <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
                       name="address1"
@@ -187,11 +160,11 @@ const OfficeDetailsForm = ({
                     />
                   </Grid>
 
-                  <Grid item xs={6}  textAlign="right">
-                  <Typography variant="body" component="p" md={6} sx={{pt:2,  mr: 10, fontWeight: 'bold' }}>Address 2</Typography>
+                  <Grid item xs={6}  className={globalClasses.inputLabel}>
+                  <Typography variant="body2" component="p" md={6} sx={{pt:2,  mr: 10}}>Address 2</Typography>
                   </Grid>
                   <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
-                    <Field
+                    <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
                       name="address2"
@@ -201,11 +174,11 @@ const OfficeDetailsForm = ({
                     />
                   </Grid>
 
-                  <Grid item xs={6}  textAlign="right">
-                  <Typography variant="body" component="p" md={6} sx={{pt:2,  mr: 10, fontWeight: 'bold' }}>PO Box Number</Typography>
+                  <Grid item xs={6}  className={globalClasses.inputLabel}>
+                  <Typography variant="body2" component="p" md={6} sx={{pt:2,  mr: 10}}>PO Box Number</Typography>
                   </Grid>
                   <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
-                    <Field
+                    <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
                       name="poBox"
@@ -217,8 +190,8 @@ const OfficeDetailsForm = ({
                 </Grid>
 
                 <Grid container xs={12} sm={4} spacing={1}   >
-                <Grid item xs={12}   sx={{height:"100%" , flexDirection:"column",display:"flex", alignItems:"center", justifyContent:"center"}}>
-                    <Button color="error" variant="contained" type="submit">
+                <Grid item xs={12}   className={globalClasses.button}>
+                    <Button color="primary" variant="contained" type="submit">
                       Next
                     </Button>
                   </Grid>

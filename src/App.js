@@ -1,60 +1,82 @@
 import { useEffect } from 'react';
-
 import MainCard from './components/UI/MainCard';
 import InnerCard from './components/UI/InnerCard';
-import Notification from './components/UI/Notification';
-
-import PersonalInfoForm from './components/Registration/Forms/PersonalInfoForm';
 import './App.css';
-import { Box, Card, CardContent, Typography } from '@mui/material';
-import { userActions } from './store/user-slice';
-import { uiActions } from './store/ui-slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { counterActions } from './store/stepperCounter-slice';
-
-let isInitial = true;
+import { ThemeProvider } from '@emotion/react';
+import { CssBaseline, createTheme } from '@mui/material';
+import { grey, red } from '@mui/material/colors';
 
 function App() {
 
-  const notification = useSelector(state => state.ui.notification);
-  const isStepsFinished = useSelector(state => state.counter.isFinished);
+  const theme = createTheme({
+ 
+    palette: {
+      mode: "light",
+      primary: {
+        main: red[700]
+      },
+      secondary: {
+        main: grey[400],
+        light: grey[100]
+      }
+    },
+    typography: {
+
+      h2: {
+
+        fontFamily: ['Open Sans', 'sans-serif']
+      },
+      h3: {
+        fontFamily: ['Questrial', 'sans-serif', 'Poppins', 'sans-serif'],
+        color: '#FFF'
+      },
+      h6: {
+        fontSize: "1.5rem"
+      },
+      body2: {
+        fontWeight: 550,
+        fontSize: "1rem",
+        fontFamily: [
+          'Montserrat',
+          'Titillium Web:300,400,700',
+          'Anton',
+          'sans-serif'
+        ]
+
+      },
+
+    },
+    button: {
+      textTransform: "none"
+    }
+  })
+
   const counter = useSelector(state => state.counter.counter);
 
-  const user = useSelector(state => state.user);
   const dispatch = useDispatch();
 
 
   useEffect(() => {
-    console.log(`From App.js - ${counter}`)
-    if (counter !== 0)
-    {
+   
+    if (counter !== 0) {
       dispatch(counterActions.setCounter(counter));
     }
-    
-    // if(isInitial )
-    // {
-    //   if(isStepsFinished && )
-    //   {
-    //     dispatch(counterActions.resetCounter());
-    //     //console.log(" Hi ")
-    //   }
-      
-    //   isInitial = false;
-    // }
-  
+
+
   }, []);
 
 
 
   return (
+    <ThemeProvider theme={theme} >
+      <CssBaseline />
       <MainCard >
-        <InnerCard >
-        {/* {notification && (notification.status === 'pending') && <Notification 
-        status={notification.status} 
-        title={notification.title}
-        message={notification.message} />} */}
-        </InnerCard>
+        <InnerCard />
       </MainCard>
+    </ThemeProvider>
+
   );
 }
 

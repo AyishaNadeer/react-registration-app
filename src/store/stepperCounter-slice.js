@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialCounterState = { counter:0, isFinished: false};
+const initialCounterState = {steps : ['Step 1', 'Step 2', 'Step 3'], counter:0, isFinished: false, completedSteps: []};
 
 const stepperCounterSlice = createSlice({
     name: 'counter',
@@ -11,16 +11,23 @@ const stepperCounterSlice = createSlice({
         },
         increment(state) {
             state.counter++;
+           
         },
         decrement(state) {
             state.counter--;
         },
+        completeStep(state,action) {
+            if(!state.completedSteps.includes(action.payload))
+            {
+                state.completedSteps = [...state.completedSteps, action.payload];
+            }
+        },
         resetCounter(state) {
             state.counter = 0;
             state.isFinished= false;
+            state.completedSteps = [];
         },
         finish(state) {
-            //state.counter = 0;
             state.isFinished= true;
         }
     }

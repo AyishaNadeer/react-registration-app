@@ -1,36 +1,28 @@
 import React from "react";
-import {Stack, Box, Card, CardContent, Typography } from '@mui/material';
-
+import {Stack, Box, Typography } from '@mui/material';
+import '../../App.css';
 import { useSelector } from 'react-redux';
+import globalUseStyles from "../Registration/Forms/stylesHooks";
 
 const MainCard = (props) => {
 
+    const globalClasses = globalUseStyles();
+
     const stepperCounter = useSelector(state => state.counter.counter);
-    const finished = useSelector(state => state.counter.isFinished);
 
     return(
-        <Stack textAlign="center" backgroundColor= 'skyBlue' display='block' height="100%">
-            <header style={{textAlign:'left',  margin: '0'}}>
-            {/* <Box textAlign='left' > */}
-              {(stepperCounter === 0) && <Typography sx={{ color:'#FFF', pt: 10, mb:0}} variant="h3" >Personal Info Page</Typography>}
-              {(stepperCounter === 1) && <Typography sx={{ color:'#FFF', pt: 10, mb:0}} variant="h3">Office Info Page</Typography>}
-              {(stepperCounter === 2) && <Typography sx={{ color:'#FFF', pt: 10, mb:0}} variant="h3" >Confirmation Page</Typography>}
-              {(stepperCounter === 3) && (!finished) &&  <Typography sx={{ color:'#FFF', px: 10, my:5}} variant="h3">Registration Success</Typography>}
-            {/* </Box> */}
+        <Stack className={globalClasses.mainCard} sx={{ height: '100%',backgroundColor: 'info.light', display:'block',}} >
+            <header className={globalClasses.textLeft} sx={{m:0}}>
+            <Box textAlign='left' sx={{ml: 20, mb:2}} >
+              {(stepperCounter === 0) && <Typography  variant="h3" sx={{ pt: 10, mb:0}} component="h3" >Personal Info Page</Typography>}
+              {(stepperCounter === 1) && <Typography sx={{  pt: 10, mb:0}} variant="h3">Office Info Page</Typography>}
+              {(stepperCounter === 2) && <Typography sx={{ pt: 10, mb:0}} variant="h3" >Confirmation Page</Typography>}
+              {(stepperCounter === 3) && <Typography sx={{  pt: 10, my:0}} variant="h3">Registration Success</Typography>}
+            </Box>
             </header>
              {props.children}
         </Stack>
-        // <Box
-        //   minWidth="500px"
-        //   sx={{ my: 10, display: 'flex', justifyContent: 'center' }}
-        // >
-        //   <Card sx={{ width: 400, height: 300,background: 'primary' }}>
-        //     <CardContent>
-        //       <h1>{props.heading}</h1>
-        //       {props.children}
-        //     </CardContent>
-        //   </Card>
-        // </Box>
+       
     );
 };
 

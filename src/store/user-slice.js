@@ -1,7 +1,4 @@
-import { useEffect } from "react";
-
 import { createSlice } from "@reduxjs/toolkit";
-import { uiActions } from "./ui-slice";
 
 const initialUserState = {
     id:'',
@@ -24,7 +21,6 @@ const userSlice = createSlice({
             state.signature= action.payload.signature;
         },
         addUserPersonalInfo(state, action) {
-                //state.id = action.payload.id;
                 state.personalInfo = {
                     name: action.payload.name,
                     email: action.payload.email,
@@ -49,7 +45,6 @@ const userSlice = createSlice({
             state.signature = action.payload.signature;
         },
         resetUserState(state,action) {
-            //state = {initialUserState};
             return initialUserState;
         }
     }

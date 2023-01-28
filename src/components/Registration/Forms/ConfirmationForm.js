@@ -2,24 +2,37 @@ import { useSelector, useDispatch } from "react-redux";
 import { userActions } from "../../../store/user-slice";
 import { uiActions } from "../../../store/ui-slice";
 import { counterActions } from '../../../store/stepperCounter-slice';
-import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { Formik, Form } from 'formik';
 import React, { useState, useRef, useCallback } from "react";
 import { Stack, Button, ButtonGroup, Box, Typography, Grid } from '@mui/material';
 import SignatureCanvas from 'react-signature-canvas'
 import Webcam from 'react-webcam';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { object, string } from 'yup';
+import profilePicIcon from '../../../profilePicIcon.png';
+import cameraIcon from '../../../cameraIcon.png';
+import fileIcon from '../../../fileIcon.png';
+import apiRequest from '../../../apiRequest';
+import globalUseStyles from './stylesHooks';
+
+const FORM_VALIDATION = object().shape({
+  profile: string().required(),
+  signature: string().required(),
+ });
 
 const videoConstraints = {
-  width: 160,
-  height: 120,
+  width: 100,
+  height: 100,
   facingMode: "user",
 };
 
 
 const ConfirmationForm = ({ values }) => {
+
+  const API_URL = 'http://localhost:3500/users';
+
+  const globalClasses = globalUseStyles();
 
   const steps = useSelector(state => state.counter.steps);
   const activeStep = useSelector(state => state.counter.counter);
@@ -39,7 +52,7 @@ const ConfirmationForm = ({ values }) => {
 
 
   const handleUploadClick = () => {
- 
+
     inputRef.current?.click();
   };
 
@@ -73,42 +86,28 @@ const ConfirmationForm = ({ values }) => {
     setFieldValue("profile", imageSrc);
   }, [webcamRef, setImageURL, setShowCamera]);
 
-  const sendUserData = async ({ profile, signature }) => {
+  const saveUserData = async ({ profile, signature }) => {
 
-    dispatch(uiActions.showNotification({
-      status: 'pending',
-      title: 'Sending...',
-      message: 'Sending user data'
-    }));
-    const response = await fetch(
-      `https://react-http-d77c9-default-rtdb.firebaseio.com/User/${userId}.json`,
-      {
-        method: 'PUT',
-        body: JSON.stringify({
-          personalInfo: user.personalInfo,
-          officeDetails: user.officeInfo,
-          profile,
-          signature
-        }
-        )
-      }
-    );
+    dispatch(uiActions.showNotification({status: 'pending',title: 'Sending...',message: 'Sending user data'}));
 
-    if (!response.ok) {
-      dispatch(uiActions.showNotification({
-        status: 'error',
-        title: 'Error!',
-        message: 'Sending user data failed'
-      }));
-    }
-
-    dispatch(uiActions.showNotification({
-      status: 'success',
-      title: 'Success!',
-      message: 'Sent user data successfully!'
-    }));
-
+    if(userId !== ''){
+    const updateOptions = {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        profile,
+        signature
+      })
+    };
+  
+    const { errMsg}  = await apiRequest(`${API_URL}/${userId}`, updateOptions)
+    if(errMsg)  dispatch(uiActions.showNotification({ status: 'error',title: 'Error!',message: 'Sending user data failed'}));
+    else  dispatch(uiActions.showNotification({status: 'success',title: 'Success!',message: 'Sent user data successfully!'}));
   }
+  }
+
 
   const backButtonClickHandler = (event) => {
     console.log('Hi - back button handler');
@@ -119,33 +118,33 @@ const ConfirmationForm = ({ values }) => {
   return (
     <Stack>
       {user && (
-        <Box
+        <Box className={globalClasses.formBox}
           component="div"
-          sx={{ display: "block", border: "2px dashed grey", borderRadius: "25px", height: "100%", width: "100%", m: 0 }}
+          sx={{  m: 5 }}
+
         >
           <Formik
             initialValues={{ profile: null, signature: '' }}
+            validationSchema={FORM_VALIDATION}
             onSubmit={(values) => {
 
-              //console.log(values)
               dispatch(userActions.addUserProfile(values));
 
-              sendUserData(values)
+              saveUserData(values)
                 .then(() => {
                   dispatch(counterActions.increment());
                   if (activeStep === steps.length - 1) {
                     dispatch(counterActions.finish());
                   }
+                  dispatch(counterActions.completeStep(activeStep));
                 })
-                .catch((error) => {
-                  dispatch(
-                    uiActions.showNotification({
-                      status: "error",
-                      title: "Error!",
-                      message: "Sending user data failed",
-                    })
-                  );
-                });
+                .catch(error => {
+                  dispatch(uiActions.showNotification({
+                    status: 'error',
+                    title: 'Error!',
+                    message: 'Sending user data failed'
+                  }));
+                })
 
             }}
           >
@@ -157,12 +156,12 @@ const ConfirmationForm = ({ values }) => {
                   spacing={5}
                   width="100%"
                 >
-                  <Grid container textAlign={"left"} xs={12} sm={8} md={4} padding="2%">
+                  <Grid container sx={{textAlign: 'left', pl:10}} xs={12} sm={8} md={4} padding="2%">
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                       
                       >
                         {user.personalInfo.name}
                       </Typography>
@@ -170,9 +169,9 @@ const ConfirmationForm = ({ values }) => {
 
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                        
                       >
                         {user.personalInfo.email}
                       </Typography>
@@ -180,9 +179,9 @@ const ConfirmationForm = ({ values }) => {
 
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                     
                       >
                         {user.personalInfo.mobile}
                       </Typography>
@@ -190,9 +189,9 @@ const ConfirmationForm = ({ values }) => {
 
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                      
                       >
                         {user.personalInfo.address1}
                       </Typography>
@@ -200,9 +199,9 @@ const ConfirmationForm = ({ values }) => {
 
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                      
                       >
                         {user.personalInfo.address2}
                       </Typography>
@@ -210,21 +209,21 @@ const ConfirmationForm = ({ values }) => {
 
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                        
                       >
                         {user.personalInfo.address3}
                       </Typography>
                     </Grid>
                   </Grid>
 
-                  <Grid container textAlign={"left"} xs={12} sm={8} md={4} padding="2%" >
+                  <Grid container sx={{textAlign:'left', pl:10}} xs={12} sm={8} md={4} padding="2%" >
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                      
                       >
                         {user.officeInfo.building}
                       </Typography>
@@ -232,9 +231,9 @@ const ConfirmationForm = ({ values }) => {
 
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                       
                       >
                         {user.officeInfo.city}
                       </Typography>
@@ -242,9 +241,9 @@ const ConfirmationForm = ({ values }) => {
 
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                       
                       >
                         {user.officeInfo.landline}
                       </Typography>
@@ -252,9 +251,9 @@ const ConfirmationForm = ({ values }) => {
 
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                       
                       >
                         {user.officeInfo.address1}
                       </Typography>
@@ -262,9 +261,9 @@ const ConfirmationForm = ({ values }) => {
 
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                        
                       >
                         {user.officeInfo.address2}
                       </Typography>
@@ -272,52 +271,58 @@ const ConfirmationForm = ({ values }) => {
 
                     <Grid item xs={12} >
                       <Typography
-                        variant="body"
+                        variant="body2"
                         component="p"
-                        sx={{ fontWeight: "bold" }}
+                       
                       >
                         {user.officeInfo.poBox}
                       </Typography>
                     </Grid>
                   </Grid>
 
-                  <Grid container textAlign={"left"} xs={12} sm={8} md={4} padding="2%">
-                    <Grid item xs={12} height="60%" justifyItems={"right"} container
-                      border="2px dashed grey">
+                  <Grid container sx={{textAlign:"left",padding:"2%",display:"flex" }} xs={12} sm={8} md={4}  spacing={1}  >
+                   
+                    <Grid  container  xs={10} sx={{height:"45%",justifyItems:"center",alignSelf:'flex-start',border:"2px dashed grey", borderRadius:"15%", m:0 }} 
+                       >
 
-                      <Grid item md={6} sx={{ display: "block", border: "2px dashed grey", borderRadius: "15%", height: "80%", justifyContent: "left" }}>
+                      <Grid item xs={12} md={6} sx={{ width:"80%", display: "block", justifyContent: "center", alignItems: "center" }}>
+                       
                         {showCamera ?
 
-                          <><Webcam
+                          <><Webcam 
                             audio={false}
                             ref={webcamRef}
                             screenshotFormat="image/jpeg"
                             videoConstraints={videoConstraints}
-                            minScreenshotWidth={180}
-                            minScreenshotHeight={180}
+                            minScreenshotWidth={100}
+                            minScreenshotHeight={100}
                           />
-                           
+
                             <ButtonGroup >
-                              <Button type='button' variant="outlined" startIcon={<CheckCircleIcon />} onClick={() => capture(setFieldValue)} />
-                              <Button type='button' variant="outlined" startIcon={<CancelIcon />} onClick={() => setShowCamera(prevValue => !prevValue)} />
+                              <Button color="secondary" type='button' variant="text" startIcon={<CheckCircleIcon />} onClick={() => capture(setFieldValue)} />
+                              <Button  color="secondary" type='button' variant="text" startIcon={<CancelIcon />} onClick={() => setShowCamera(prevValue => !prevValue)} />
                             </ButtonGroup>
 
                           </>
                           :
-                          imageURL &&
-                          <Box component="img" src={imageURL} alt='test' sx={{ height: "120px", width: "auto" }} />
-                        }
+                          imageURL ?
+                          <Box component="img" src={imageURL} alt='test' sx={{ height: "100px", width: "auto" }} />
+                          :  <Box component="img" src={profilePicIcon} alt='test' sx={{ml:3,mt:2, height: "80px", width: "auto" }} />
+
+                        } 
                       </Grid>
-                      <Grid item md={6} spacing={2} sx={{ height: "80%", justifyContent: "right" }}>
-                        <Grid item md={6} sx={{ height: "40%", justifyContent: "right" }}>
-                          <CameraAltIcon onClick={() => setShowCamera(prevValue => !prevValue)} />
-
+                      <Grid item xs={12} md={6} spacing={3} sx={{ height: "80%", justifyContent: "right", textAlign: "right" }}>
+                        <Grid item  md={4} sx={{ height: "40%", justifyContent: "right", ml: "25%" }} >
+                          <Button type='button' onClick={() => setShowCamera(prevValue => !prevValue)}>
+                          <img src={cameraIcon}  fontSize="large" alt="Camera Icon" />
+                          </Button>
+                         
                         </Grid>
-                        <Grid item md={6} sx={{ height: "40%", justifyContent: "right" }}>
+                        <Grid item md={4} sx={{ height: "40%", justifyContent: "right", ml: "25%", mt: "5%" }}>
 
-                          <button type='button' onClick={handleUploadClick}>
-                            <FileUploadIcon />
-                          </button>
+                          <Button type='button' onClick={handleUploadClick}>
+                            <img src={fileIcon} alt="File Icon" />
+                          </Button>
                           <input
                             type="file"
                             ref={inputRef}
@@ -327,29 +332,26 @@ const ConfirmationForm = ({ values }) => {
                           />
                         </Grid>
                       </Grid>
-                      {/* </Box> */}
+                     
                     </Grid>
-                    <Grid item xs={12} height="35%" justifyItems={"right"} container
-                      border="2px dashed grey">
+                   
+                    <Grid item xs={10} className={globalClasses.canvasContainer} >
 
-                      <Grid item md={6} >
-
-                        <SignatureCanvas penColor='gray' name="sigpad"
-                          canvasProps={{ width: 270, height: 100, className: 'sigCanvas' }} ref={sigRef} onEnd={() => {
-                            setSigpad(sigRef.current.toDataURL());
-                            setFieldValue("signature", sigRef.current.toDataURL());
-                            console.log(sigRef.current.toDataURL());
-                          }} />
-                        <Button variant="outlined" startIcon={<CancelIcon />} type="button" onClick={() => { console.log('Cleared'); setSigpad(null); }} />
-
-                      </Grid>
+                      <SignatureCanvas  name="sigpad" Tooltip="Signature" className={globalClasses.canvas} 
+                        canvasProps={{ width: 'inherit', height: '100%', className: 'sigCanvas' }} ref={sigRef} onEnd={() => {
+                          setSigpad(sigRef.current.toDataURL());
+                          setFieldValue("signature", sigRef.current.toDataURL());
+                          console.log(sigRef.current.toDataURL());
+                        }} />
+                      <Button color="secondary" variant="text" startIcon={<CancelIcon />} type="button" onClick={() => { console.log('Cleared'); sigRef.current.clear(); }} />
 
                     </Grid>
+
                   </Grid>
                 </Grid>
                 <Grid container xs={12} spacing={3} sx={{ m: 0, width: "100%" }}>
-                  <Grid item xs={6} justifyContent="right">
-                    <Button
+                  <Grid item xs={6} sx={{justifyContent:"right"}}>
+                    <Button color="secondary"
                       variant="contained"
                       type="button"
                       onClick={backButtonClickHandler}
@@ -357,8 +359,8 @@ const ConfirmationForm = ({ values }) => {
                       Back
                     </Button>
                   </Grid>
-                  <Grid item xs={6} justifyContent="left">
-                    <Button color="error" variant="contained" type="submit">
+                  <Grid item xs={6} sx={{justifyContent:"left"}}>
+                    <Button color="primary" variant="contained" type="submit">
                       Submit
                     </Button>
 
