@@ -11,7 +11,7 @@ import { grey, red } from '@mui/material/colors';
 function App() {
 
   const theme = createTheme({
- 
+    
     palette: {
       mode: "light",
       primary: {
@@ -23,16 +23,19 @@ function App() {
       }
     },
     typography: {
-
+      fontSize: '1rem',
       h2: {
 
         fontFamily: ['Open Sans', 'sans-serif']
       },
       h3: {
-        fontFamily: ['Questrial', 'sans-serif', 'Poppins', 'sans-serif'],
+        fontFamily: ['Poppins', 'sans-serif'],
+        fontSize: '2.5rem',
+       // fontFamily: ['Questrial', 'sans-serif', 'Poppins', 'sans-serif'],
         color: '#FFF'
       },
       h6: {
+        fontFamily: ['Poppins', 'sans-serif'],
         fontSize: "1.5rem"
       },
       body2: {

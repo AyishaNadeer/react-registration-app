@@ -4,7 +4,7 @@ import { uiActions } from "../../../store/ui-slice";
 import { counterActions } from '../../../store/stepperCounter-slice';
 import { Formik, Form } from 'formik';
 import React, { useState, useRef, useCallback } from "react";
-import { Stack, Button, ButtonGroup, Box, Typography, Grid } from '@mui/material';
+import { Stack, Button,  Box, Typography, Grid } from '@mui/material';
 import SignatureCanvas from 'react-signature-canvas'
 import Webcam from 'react-webcam';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -22,7 +22,7 @@ const FORM_VALIDATION = object().shape({
  });
 
 const videoConstraints = {
-  width: 100,
+  width: 150,
   height: 100,
   facingMode: "user",
 };
@@ -80,7 +80,6 @@ const ConfirmationForm = ({ values }) => {
 
   const capture = useCallback((setFieldValue) => {
     const imageSrc = webcamRef.current.getScreenshot();
-    console.log(imageSrc);
     setImageURL(imageSrc);
     setShowCamera(false);
     setFieldValue("profile", imageSrc);
@@ -156,7 +155,7 @@ const ConfirmationForm = ({ values }) => {
                   spacing={5}
                   width="100%"
                 >
-                  <Grid container sx={{textAlign: 'left', pl:10}} xs={12} sm={8} md={4} padding="2%">
+                  <Grid container sx={{textAlign: 'left', pl:10}} xs={12} sm={6} md={4} padding="2%" >
                     <Grid item xs={12} >
                       <Typography
                         variant="body2"
@@ -218,7 +217,7 @@ const ConfirmationForm = ({ values }) => {
                     </Grid>
                   </Grid>
 
-                  <Grid container sx={{textAlign:'left', pl:10}} xs={12} sm={8} md={4} padding="2%" >
+                  <Grid container sx={{textAlign:'left', pl:10}} xs={12} sm={6} md={4} padding="2%" >
                     <Grid item xs={12} >
                       <Typography
                         variant="body2"
@@ -280,45 +279,53 @@ const ConfirmationForm = ({ values }) => {
                     </Grid>
                   </Grid>
 
-                  <Grid container sx={{textAlign:"left",padding:"2%",display:"flex" }} xs={12} sm={8} md={4}  spacing={1}  >
+                  <Grid container className={globalClasses.inputArea} xs={12} sm={8}  md={4}  spacing={1}  >
                    
-                    <Grid  container  xs={10} sx={{height:"45%",justifyItems:"center",alignSelf:'flex-start',border:"2px dashed grey", borderRadius:"15%", m:0 }} 
+                    <Grid  container  xs={10} sm={8} md={12} lg={10} xl={7} className={globalClasses.profileContainer}
                        >
 
-                      <Grid item xs={12} md={6} sx={{ width:"80%", display: "block", justifyContent: "center", alignItems: "center" }}>
+                      <Grid item xs={7} sm={8} className={globalClasses.webcamContainer}>
                        
                         {showCamera ?
 
-                          <><Webcam 
+                          <Grid container direction="row" >
+                            <Grid item xs={8} sx={{pl:2,p:1}} >
+                            <Webcam 
                             audio={false}
                             ref={webcamRef}
                             screenshotFormat="image/jpeg"
                             videoConstraints={videoConstraints}
+                            style={{marginLeft:1,marginTop:1, height: "100px", width: "150px",borderRadius:'25%'}}
                             minScreenshotWidth={100}
-                            minScreenshotHeight={100}
+                            minScreenshotHeight={100} 
                           />
-
-                            <ButtonGroup >
-                              <Button color="secondary" type='button' variant="text" startIcon={<CheckCircleIcon />} onClick={() => capture(setFieldValue)} />
-                              <Button  color="secondary" type='button' variant="text" startIcon={<CancelIcon />} onClick={() => setShowCamera(prevValue => !prevValue)} />
-                            </ButtonGroup>
-
-                          </>
+                          </Grid>
+                          <Grid item xs={4} direction="column" className={globalClasses.cameraButtonContainer} sx={{pt:3,}}>
+                            
+                              <Button color="info" type='button' variant="text" startIcon={<CheckCircleIcon />} onClick={() => capture(setFieldValue)} />
+                              <Button  color="primary" type='button' variant="text" startIcon={<CancelIcon />} onClick={() => setShowCamera(prevValue => !prevValue)} />
+                          
+                            </Grid>
+                          </Grid>
                           :
                           imageURL ?
-                          <Box component="img" src={imageURL} alt='test' sx={{ height: "100px", width: "auto" }} />
-                          :  <Box component="img" src={profilePicIcon} alt='test' sx={{ml:3,mt:2, height: "80px", width: "auto" }} />
+                          <Box sx={{pl:2,p:1, borderRadius:"25%", height: "100px", width: "150px" }}>
+                            <img src={imageURL} alt='Profile Pic' style={{height: "inherit", width: "inherit",borderRadius:"25%"}}  />
+                          </Box>
+                          :  <Box  sx={{ml:1,mt:2, height: "80px", width: "auto" }} >
+                            <img src={profilePicIcon} alt='Profile Icon' style={{height: "inherit", width: "inherit",borderRadius:"25%"}}></img>
+                          </Box>
 
                         } 
                       </Grid>
-                      <Grid item xs={12} md={6} spacing={3} sx={{ height: "80%", justifyContent: "right", textAlign: "right" }}>
-                        <Grid item  md={4} sx={{ height: "40%", justifyContent: "right", ml: "25%" }} >
+                      <Grid item xs={5} sm={4}  spacing={3} className={globalClasses.profileIconContainer}>
+                        <Grid item  md={3} className={globalClasses.icon} sx={{ ml: "20%", mt: "5%"}}>
                           <Button type='button' onClick={() => setShowCamera(prevValue => !prevValue)}>
-                          <img src={cameraIcon}  fontSize="large" alt="Camera Icon" />
+                          <img src={cameraIcon}  alt="Camera Icon" />
                           </Button>
                          
                         </Grid>
-                        <Grid item md={4} sx={{ height: "40%", justifyContent: "right", ml: "25%", mt: "5%" }}>
+                        <Grid item md={3}  className={globalClasses.icon} sx={{ ml: "20%", mt: "5%"}}>
 
                           <Button type='button' onClick={handleUploadClick}>
                             <img src={fileIcon} alt="File Icon" />
@@ -335,15 +342,14 @@ const ConfirmationForm = ({ values }) => {
                      
                     </Grid>
                    
-                    <Grid item xs={10} className={globalClasses.canvasContainer} >
-
-                      <SignatureCanvas  name="sigpad" Tooltip="Signature" className={globalClasses.canvas} 
-                        canvasProps={{ width: 'inherit', height: '100%', className: 'sigCanvas' }} ref={sigRef} onEnd={() => {
+                    <Grid container  xs={10} sm={8} md={12} lg={10} xl={7} className={globalClasses.canvasContainer} >
+                      
+                      <SignatureCanvas  name="sigpad"   Label="Signature" 
+                        canvasProps={{ style: {width:'100%',height:'100%', borderRadius:'15%',margin:0 } }} ref={sigRef} onEnd={() => {
                           setSigpad(sigRef.current.toDataURL());
                           setFieldValue("signature", sigRef.current.toDataURL());
-                          console.log(sigRef.current.toDataURL());
                         }} />
-                      <Button color="secondary" variant="text" startIcon={<CancelIcon />} type="button" onClick={() => { console.log('Cleared'); sigRef.current.clear(); }} />
+                      <Button  color="primary" variant="text" startIcon={<CancelIcon />} type="button" onClick={() => {  sigRef.current.clear(); }} />
 
                     </Grid>
 

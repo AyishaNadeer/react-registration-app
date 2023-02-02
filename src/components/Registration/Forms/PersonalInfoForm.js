@@ -116,7 +116,7 @@ const PersonalInfoForm = ({
         message: 'Sending user data failed'
       }));
     })
-
+ 
 
           
             } 
@@ -126,29 +126,32 @@ const PersonalInfoForm = ({
         >
           {({ isSubmitting }) => (
             <Form>
-              <Grid className={globalClasses.root}  container sx={{p:10}}>
+              <Grid container className={globalClasses.root}   >   {/*sx={{p:10}} */}
                 
-                <Grid container xs={12} sm={8}  >
-                  <Grid item xs={6}  className={globalClasses.inputLabel}>
-                    
-                    <Typography variant="body2" component="p" md={6} sx={{pt:2, mr: 10}} >Name</Typography>
-                    
+                <Grid container xs={12} md={8} xl={9} >
+                     
+                  <Grid item xs={12}  md={6}    className={globalClasses.inputLabel} >   
+                    <Grid  lg={8}  md={10}    sx={{ justifyContent:"right"}} className={globalClasses.inputLabel} >
+                    <Typography variant="body2" component="p"  className={globalClasses.typography}  >Name</Typography>  
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3} >
+                  <Grid item xs={12} md={6} lg={4} xl={3} >
                     <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
                       name="name"
                       component={TextField}
                       size="small"
-                     
                     />
                   </Grid>
 
-                  <Grid item xs={6}  className={globalClasses.inputLabel}>
-                  <Typography variant="body2" component="p" md={6} sx={{pt:2, mr: 10}}>Email</Typography>
+                  <Grid item xs={12} md={6} className={globalClasses.inputLabel}>
+                  <Grid lg={8}  md={10} sx={{ justifyContent:"right"}} className={globalClasses.inputLabel} >
+                  <Typography variant="body2" component="p"  className={globalClasses.typography} >Email</Typography>
+                    </Grid>
+                  
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+                  <Grid item xs={12} md={6} lg={4} xl={3}>
                     <Field className={globalClasses.input} 
                       type="email"
                       variant="outlined"
@@ -159,11 +162,13 @@ const PersonalInfoForm = ({
                     />
                   </Grid>
 
-                  <Grid item xs={6} sm={6} className={globalClasses.inputLabel}>
+                  <Grid item xs={12} md={6} className={globalClasses.inputLabel}>
+                  <Grid lg={8}  md={10}  sx={{ justifyContent:"right"}}  className={globalClasses.inputLabel} >
+                  <Typography variant="body2" component="p"  className={globalClasses.typography}>Mobile Number</Typography>
+                    </Grid>
                   
-                  <Typography variant="body2" component="p" md={6}  sx={{pt:2, mr: 10}}>Mobile Number</Typography>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3} >
+                  <Grid item xs={12} md={6}  lg={4} xl={3} >
                     <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
@@ -174,26 +179,28 @@ const PersonalInfoForm = ({
                     />
                   </Grid>
 
-                  <Grid item xs={6} sm={6} className={globalClasses.inputLabel}>
-                 
-                  <Typography variant="body2" component="p" md={6}  sx={{ pt:2,  mr: 10 }}>Address Line 1</Typography>
+                  <Grid item xs={12} md={6} className={globalClasses.inputLabel}  >
+                  <Grid lg={8}  md={10}  sx={{ justifyContent:"right"}}   className={globalClasses.inputLabel} >
+                  <Typography variant="body2" component="p"   className={globalClasses.typography} >Address Line 1</Typography>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3} >
+                  </Grid>
+                  <Grid item xs={12} md={6} lg={4} xl={3} >
                     <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
                       name="address1"
                       component={TextField}
                       size="small"
-                      height="50px"
+                      
                     />
                   </Grid>
 
-                  <Grid item xs={6} sm={6} className={globalClasses.inputLabel}>
-                 
-                  <Typography variant="body2" component="p" md={6}  sx={{pt:2,mr: 10}}>Address Line 2</Typography>
+                  <Grid item xs={12} md={6} className={globalClasses.inputLabel}>
+                  <Grid lg={8}  md={10}  sx={{ justifyContent:"right"}}  className={globalClasses.inputLabel} >
+                  <Typography variant="body2" component="p"  className={globalClasses.typography} >Address Line 2</Typography>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+                  </Grid>
+                  <Grid item xs={12}  md={6} lg={4} xl={3}>
                     <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
@@ -203,11 +210,14 @@ const PersonalInfoForm = ({
                     
                     />
                   </Grid>
+                  
 
-                  <Grid item xs={6} sm={6}   className={globalClasses.inputLabel}>
-                  <Typography variant="body2"  component="p"  sx={{ pt:2,mr: 10 }}>Address Line 3</Typography>
+                  <Grid item xs={12} md={6}   className={globalClasses.inputLabel}>
+                  <Grid lg={8}  md={10} sx={{ justifyContent:"right"}}  className={globalClasses.inputLabel} >
+                  <Typography variant="body2"  component="p"  className={globalClasses.typography} >Address Line 3</Typography>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3} >
+                  </Grid>
+                  <Grid item xs={12} md={6} lg={4} xl={3} >
                     <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
@@ -219,7 +229,7 @@ const PersonalInfoForm = ({
                   </Grid>
                 </Grid>
 
-                <Grid container xs={12} sm={4} spacing={1}   >
+                <Grid container xs={12} md={4} xl={1} spacing={1}   >
                   <Grid item xs={12}   className={globalClasses.button}>
                     <Button color="primary" variant="contained" type="submit"  >
                       Next

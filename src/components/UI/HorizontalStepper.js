@@ -89,7 +89,7 @@ export default function HorizontalLinearStepper() {
             <Step key={index} disabled {...stepProps} onClick={() => {
     
              const completedSet = [...completedSteps];
-             if(completedSet.includes(index))
+             if(completedSet.includes(index) || completedSet.includes(index-1))
              {
               dispatch(counterActions.setCounter(index));
               labelProps[index].completed = true;

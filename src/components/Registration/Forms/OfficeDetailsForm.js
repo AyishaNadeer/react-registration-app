@@ -100,12 +100,14 @@ const OfficeDetailsForm = ({
         >
           {({ isSubmitting }) => (
             <Form>
-              <Grid  className={globalClasses.root} container sx={{p: 10}} >
-              <Grid container xs={12} sm={8}  >
-                  <Grid item xs={6}  className={globalClasses.inputLabel} >
-                    <Typography variant="body2" component="p" md={6} sx={{pt:2,  mr: 10 }} >Building </Typography>
+              <Grid container className={globalClasses.root}   >
+              <Grid container xs={12} md={8} xl={9}   >
+                  <Grid item xs={12}  md={6}    className={globalClasses.inputLabel} >
+                  <Grid  lg={8}  md={10}    sx={{ justifyContent:"right"}} className={globalClasses.inputLabel} >
+                    <Typography variant="body2" component="p" className={globalClasses.typography} >Building </Typography>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3} >
+                  </Grid>
+                  <Grid item xs={12} md={6} lg={4} xl={3}>
                     <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
@@ -116,26 +118,27 @@ const OfficeDetailsForm = ({
                     />
                   </Grid>
 
-                  <Grid item xs={6}  className={globalClasses.inputLabel} >
-                  <Typography variant="body2" component="p" md={6} sx={{pt:2,  mr: 10 }}>City</Typography>
+                  <Grid item xs={12}  md={6}    className={globalClasses.inputLabel} >
+                  <Grid  lg={8}  md={10}    sx={{ justifyContent:"right"}} className={globalClasses.inputLabel} >
+                  <Typography variant="body2" component="p" className={globalClasses.typography} >City</Typography>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+                  </Grid>
+                  <Grid item xs={12} md={6} lg={4} xl={3}>
                     <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
                       name="city"
                       component={TextField}
                       size="small"
-                     
-                    
                     />
                   </Grid>
 
-                  <Grid item xs={6}   className={globalClasses.inputLabel}>
-                    
-                    <Typography variant="body2" component="p" md={6} sx={{ pt:2, mr: 10 }}>Landline Number</Typography>
+                  <Grid item xs={12}  md={6}    className={globalClasses.inputLabel}>
+                  <Grid  lg={8}  md={10}    sx={{ justifyContent:"right"}} className={globalClasses.inputLabel} >
+                    <Typography variant="body2" component="p" className={globalClasses.typography}>Landline Number</Typography>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+                  </Grid>
+                  <Grid item xs={12} md={6} lg={4} xl={3}>
                     <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
@@ -146,10 +149,12 @@ const OfficeDetailsForm = ({
                     />
                   </Grid>
 
-                  <Grid item xs={6}  className={globalClasses.inputLabel}>
-                  <Typography variant="body2" component="p" md={6} sx={{pt:2,  mr: 10 }}>Address 1</Typography>
+                  <Grid item xs={12}  md={6}    className={globalClasses.inputLabel}>
+                  <Grid  lg={8}  md={10}    sx={{ justifyContent:"right"}} className={globalClasses.inputLabel} >
+                  <Typography variant="body2" component="p" className={globalClasses.typography}>Address 1</Typography>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+                  </Grid>
+                  <Grid item xs={12} md={6} lg={4} xl={3}>
                     <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
@@ -160,10 +165,12 @@ const OfficeDetailsForm = ({
                     />
                   </Grid>
 
-                  <Grid item xs={6}  className={globalClasses.inputLabel}>
-                  <Typography variant="body2" component="p" md={6} sx={{pt:2,  mr: 10}}>Address 2</Typography>
+                  <Grid item xs={12}  md={6}    className={globalClasses.inputLabel}>
+                  <Grid  lg={8}  md={10}    sx={{ justifyContent:"right"}} className={globalClasses.inputLabel} >
+                  <Typography variant="body2" component="p" className={globalClasses.typography}>Address 2</Typography>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+                  </Grid>
+                  <Grid item xs={12} md={6} lg={4} xl={3}>
                     <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
@@ -174,10 +181,12 @@ const OfficeDetailsForm = ({
                     />
                   </Grid>
 
-                  <Grid item xs={6}  className={globalClasses.inputLabel}>
-                  <Typography variant="body2" component="p" md={6} sx={{pt:2,  mr: 10}}>PO Box Number</Typography>
+                  <Grid item xs={12}  md={6}    className={globalClasses.inputLabel}>
+                  <Grid  lg={8}  md={10}    sx={{ justifyContent:"right"}} className={globalClasses.inputLabel} >
+                  <Typography variant="body2" component="p" className={globalClasses.typography}>PO Box Number</Typography>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+                  </Grid>
+                  <Grid item xs={12} md={6} lg={4} xl={3}>
                     <Field className={globalClasses.input} 
                       type="text"
                       variant="outlined"
@@ -189,8 +198,8 @@ const OfficeDetailsForm = ({
                   </Grid>
                 </Grid>
 
-                <Grid container xs={12} sm={4} spacing={1}   >
-                <Grid item xs={12}   className={globalClasses.button}>
+                <Grid container xs={12} md={4} xl={1} spacing={1}  >
+                  <Grid item xs={12}   className={globalClasses.button}>
                     <Button color="primary" variant="contained" type="submit">
                       Next
                     </Button>

@@ -55,7 +55,7 @@ const InnerCard = (props) => {
          
           
               <Box className={globalClasses.textLeft} sx={{ml:5, mb:2}}>
-                {(stepperCounter === 0) && <Typography variant="h6">Personal Info</Typography>}
+                {(stepperCounter === 0) && <Typography sx={{fontFamily: ['Poppins', 'sans-serif']}} variant="h6">Personal Info</Typography>}
                 {(stepperCounter === 1) && <Typography variant="h6">Office Details</Typography>}
                 {(stepperCounter === 2) && (!finished) && <Typography variant="h6">Confirmation Page</Typography>}
                
